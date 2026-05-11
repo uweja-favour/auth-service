@@ -7,8 +7,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN ./gradlew :auth-service:bootJar --no-daemon
-
+RUN chmod +x gradlew && ./gradlew bootJar --no-daemon
 
 # ─────────────────────────────────────────────
 # 2. RUNTIME STAGE
@@ -17,7 +16,7 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-COPY --from=build /app/auth-service/build/libs/*.jar app.jar
+COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
