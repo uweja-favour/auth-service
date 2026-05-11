@@ -1,0 +1,40 @@
+    # NOTE:
+    # Flyway expects one of two conditions before it starts tracking migrations:
+    #
+    # 1.) An empty schema, OR
+    #
+    # 2.) A Flyway history table (flyway_schema_history) to be already present
+
+#    baseline-on-migrate: true # This tells flyway: "Treat the existing schema
+                              # as the starting point (baseline), create the Flyway history
+                              # table, and begin tracking migrations from here onward."
+                              # Do NOT use it when: The schema is empty and you want Flyway to build from scratch
+
+spring:
+#  data:
+#    mongodb:
+#      uri: mongodb+srv://dbUser:Password123Password@cluster0.ucirk2w.mongodb.net/auth_service_db?retryWrites=true&w=majority&appName=Cluster0
+
+
+server:
+  port: ${PORT:8080}
+  address: 0.0.0.0
+
+security:
+  auth:
+    enabled: true
+
+  oauth2:
+    resourceserver:
+      jwt:
+        jwk-set-uri: http://localhost:8080/.well-known/jwks.json
+
+jwt:
+  accessSecret: asdfsdfarwegrsKLSAHAKBIUUIBuseweDOIy8b_)@#r43243234sadfew23fsxcasdfq32refwasegsade234ew
+  refreshSecret: asdijfpeiwrAW3OSI9823JKKSokls0(U2w30(*IUNskajfwke2939sdf9aww9edsafds3wrwaeasdfa34sewe
+  access-token:
+    expiration-ms: 900000
+  refresh-token:
+    expiration-ms: 2592000000
+
+

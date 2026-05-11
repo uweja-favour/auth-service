@@ -1,0 +1,15 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://dbUser:Password123Password@cluster0.fiw5cvi.mongodb.net/auth_service_db?retryWrites=true&w=majority&appName=Cluster0
+
+  profiles:
+    active: dev # default active profile; override with -Dspring.profiles.active=dev/test
+  main:
+    allow-bean-definition-overriding: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,loggers
