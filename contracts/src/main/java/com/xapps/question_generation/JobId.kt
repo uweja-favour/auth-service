@@ -1,4 +1,4 @@
-package com.xapps.questions.contracts.question_generation
+package com.xapps.question_generation
 
 import kotlinx.serialization.Serializable
 

@@ -1,25 +1,24 @@
-package com.xapps.questions.contracts.self_test_generation.dto
+package com.xapps.question_generation
 
 import com.xapps.dto.QuestionAllocationDTO
 import com.xapps.model.QuizId
 import com.xapps.model.QuizType
-import com.xapps.questions.contracts.question_generation.JobId
-import com.xapps.questions.contracts.question_generation.QuestionAllocation
-import com.xapps.questions.contracts.self_test_generation.model.QuestionGenerationSpec
+import com.xapps.question_generation.dto.toDomain
+import kotlinx.serialization.Serializable
 
-private fun QuestionAllocationDTO.toDomain(
-    id: String,
-    specId: String
-): QuestionAllocation =
-    QuestionAllocation(
-        id = id,
-        specId = specId,
-        questionType = type,
-        difficulty = difficulty,
-        count = count
-    )
+@Serializable
+data class QuestionGenerationSpec(
+    val id: String,
+    val userId: String,
+    val quizId: QuizId,
+    val questionCount: Int,
+    val allocations: List<QuestionAllocation>,
+    val fileKeys: List<String>,
+    val jobId: JobId,
+    val quizType: QuizType
+)
 
-fun createSelfTestQuestionGenerationSpec(
+fun createQuestionGenerationSpec(
     userId: String,
     quizId: QuizId,
     jobId: JobId,
@@ -46,4 +45,3 @@ fun createSelfTestQuestionGenerationSpec(
         quizType = quizType
     )
 }
-

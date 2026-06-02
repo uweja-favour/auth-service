@@ -1,4 +1,4 @@
-package com.xapps.questions.contracts.self_test_generation.dto
+package com.xapps.question_generation.dto
 
 import com.xapps.model.Difficulty
 import com.xapps.model.QuestionType
