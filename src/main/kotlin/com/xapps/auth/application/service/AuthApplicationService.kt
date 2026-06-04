@@ -12,6 +12,7 @@ import com.xapps.auth.dto.LogoutRequest
 import com.xapps.auth.dto.RefreshTokenRequest
 import com.xapps.auth.persistence.repository.exceptions.UserDoesNotExistException
 import com.xapps.auth.dto.SignupRequest
+import com.xapps.auth.dto.UpdateProfileRequest
 import com.xapps.auth.infrastructure.security.model.UserRole
 import com.xapps.auth.infrastructure.security.token.access.AccessTokenService
 import com.xapps.auth.infrastructure.security.token.refresh.RefreshTokenService
@@ -37,6 +38,10 @@ class AuthApplicationService(
     ): JwtAuthResponse {
         if (userRepository.existsByEmail(request.email)) {
             throw EmailAlreadyExistException(request.email)
+        }
+
+        if (userRepository.existsByUsername(request.username)) {
+            throw UsernameAlreadyExistException()
         }
 
         val user = User.createNew(
@@ -112,6 +117,25 @@ class AuthApplicationService(
         issueNewTokens(user)
     }
 
+
+    suspend fun updateProfile(
+        request: UpdateProfileRequest
+    ) {
+
+        val user = getAuthenticatedUserPrincipal().user
+        when {
+            user.username != request.username &&
+                    userRepository.existsByUsername(request.username)
+
+            -> {
+                throw UsernameAlreadyExistException()
+            }
+        }
+
+        val updatedUser = user.updateProfile(request.username, request.profilePhoto)
+
+        userRepository.updateUser(updatedUser)
+    }
 
     suspend fun refreshTokens(
         request: RefreshTokenRequest,

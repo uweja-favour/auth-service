@@ -1,9 +1,11 @@
 package com.xapps.auth.domain.model.user
 
+import com.xapps.model.FileData
 import com.xapps.time.types.KotlinInstant
 import com.xapps.time.types.KotlinLocalDateTime
 
 data class UserProfile(
+    val image: FileData? = null,
     val userId: String,
     val avatarS3Key: String? = null,
     val fcmDevices: List<FcmDevice> = emptyList()

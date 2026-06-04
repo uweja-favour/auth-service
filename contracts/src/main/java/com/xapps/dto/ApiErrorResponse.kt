@@ -41,6 +41,7 @@ enum class ApiErrorResponseType {
     // --- Auth errors
 
     EMAIL_ALREADY_EXISTS,
+    USERNAME_ALREADY_EXISTS,
     INVALID_CREDENTIALS,
 
     USER_BANNED,

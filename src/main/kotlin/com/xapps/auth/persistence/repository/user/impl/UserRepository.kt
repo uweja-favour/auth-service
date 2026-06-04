@@ -21,6 +21,8 @@ interface UserRepository {
     suspend fun findByEmail(email: String): User?
 
     suspend fun existsByEmail(email: String): Boolean
+
+    suspend fun existsByUsername(userName: String): Boolean
 }
 
 @Repository
@@ -84,6 +86,10 @@ class UserRepositoryImpl(
 
     override suspend fun existsByEmail(email: String): Boolean {
         return mongoRepository.existsByEmail(email)
+    }
+
+    override suspend fun existsByUsername(userName: String): Boolean {
+        return mongoRepository.existsByUsername(userName)
     }
 
     private suspend fun UserDocument.toDomain(): User {

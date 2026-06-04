@@ -3,6 +3,7 @@ package com.xapps.auth.domain.model.user
 import com.xapps.auth.domain.exceptions.UserBannedException
 import com.xapps.auth.dto.ProfileDTO
 import com.xapps.auth.infrastructure.security.model.UserRole
+import com.xapps.model.FileData
 import com.xapps.platform.core.string.generateUniqueId
 import com.xapps.platform.core.time.nowInKotlinInstant
 import com.xapps.time.types.KotlinInstant
@@ -55,6 +56,19 @@ fun User.withIdentifyingInfo(): String = "not_yet_implemented"
 fun User.getProfileDTO(): ProfileDTO {
     return ProfileDTO(
         username = username,
-        email = email
+        email = email,
+        image = profile.image
+    )
+}
+
+fun User.updateProfile(
+    username: String,
+    profilePhoto: FileData?
+): User {
+    return copy(
+        username = username,
+        profile = profile.copy(
+            image = profilePhoto
+        )
     )
 }

@@ -1,6 +1,7 @@
 package com.xapps.auth.persistence.entity.user
 
 import com.xapps.auth.persistence.BasePersistableEntity
+import com.xapps.persistence.FileDataDocument
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
@@ -25,6 +26,7 @@ data class UserProfileDocument(
     @Id
     val id1: String,
 
+    val image: FileDataDocument?,
     val userId: String,
     val avatarS3Key: String?
 ) : BasePersistableEntity() {

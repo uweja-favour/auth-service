@@ -4,8 +4,7 @@ import com.xapps.model.FileData
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ProfileDTO(
+data class UpdateProfileRequest(
     val username: String,
-    val email: String,
-    val image: FileData?
+    val profilePhoto: FileData?
 )

@@ -7,22 +7,24 @@ import com.xapps.auth.domain.exceptions.RefreshTokenExpiredException
 import com.xapps.auth.domain.exceptions.RefreshTokenInvalidException
 import com.xapps.auth.domain.exceptions.RefreshTokenRevokedException
 import com.xapps.auth.domain.exceptions.UserBannedException
+import com.xapps.auth.domain.exceptions.UsernameAlreadyExistException
 import com.xapps.dto.ApiErrorResponse
 import com.xapps.dto.ApiErrorResponseType
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     @ExceptionHandler(EmailAlreadyExistException::class)
     fun handleEmailExists(ex: EmailAlreadyExistException): ResponseEntity<ApiErrorResponse> {
-        logger.info("${javaClass.simpleName} ran handleEmailExists")
+        log.info("${javaClass.simpleName} ran handleEmailExists")
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
             ApiErrorResponse(
@@ -32,9 +34,21 @@ class GlobalExceptionHandler {
         )
     }
 
+    @ExceptionHandler(UsernameAlreadyExistException::class)
+    fun handleUsernameExists(ex: UsernameAlreadyExistException): ResponseEntity<ApiErrorResponse> {
+        log.info("${javaClass.simpleName} ran handleUsernameExists")
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+            ApiErrorResponse(
+                errorType = ApiErrorResponseType.USERNAME_ALREADY_EXISTS,
+                message = "This username is already registered"
+            )
+        )
+    }
+
     @ExceptionHandler(EmailNotFoundException::class)
     fun handleEmailNotFound(ex: EmailNotFoundException): ResponseEntity<ApiErrorResponse> {
-        logger.info("${javaClass.simpleName} ran handleEmailNotFound")
+        log.info("${javaClass.simpleName} ran handleEmailNotFound")
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
             ApiErrorResponse(
@@ -46,7 +60,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(IncorrectPasswordException::class)
     fun handleWrongPassword(ex: IncorrectPasswordException): ResponseEntity<ApiErrorResponse> {
-        logger.info("${javaClass.simpleName} ran handleWrongPassword")
+        log.info("${javaClass.simpleName} ran handleWrongPassword")
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
             ApiErrorResponse(
@@ -58,7 +72,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(UserBannedException::class)
     fun handleBanned(ex: UserBannedException): ResponseEntity<ApiErrorResponse> {
-        logger.info("${javaClass.simpleName} ran handleBanned")
+        log.info("${javaClass.simpleName} ran handleBanned")
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
             ApiErrorResponse(
@@ -70,7 +84,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(RefreshTokenExpiredException::class)
     fun handleRefreshTokenExpired(ex: RefreshTokenExpiredException): ResponseEntity<ApiErrorResponse> {
-        logger.info("${javaClass.simpleName} ran handleRefreshTokenExpired")
+        log.info("${javaClass.simpleName} ran handleRefreshTokenExpired")
 
         // returns a 401
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
@@ -83,7 +97,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(RefreshTokenRevokedException::class)
     fun handleRefreshTokenRevoked(ex: RefreshTokenRevokedException): ResponseEntity<ApiErrorResponse> {
-        logger.info("${javaClass.simpleName} ran handleRefreshTokenRevoked")
+        log.info("${javaClass.simpleName} ran handleRefreshTokenRevoked")
 
         // returns a 401
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
@@ -96,7 +110,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(RefreshTokenInvalidException::class)
     fun handleRefreshTokenInvalid(ex: RefreshTokenInvalidException): ResponseEntity<ApiErrorResponse> {
-        logger.info("${javaClass.simpleName} ran handleRefreshTokenInvalid")
+        log.info("${javaClass.simpleName} ran handleRefreshTokenInvalid")
 
         // returns a 401
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(

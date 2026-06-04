@@ -12,6 +12,7 @@ import com.xapps.auth.application.service.AuthApplicationService
 import com.xapps.auth.domain.model.user.getProfileDTO
 import com.xapps.auth.dto.LogoutRequest
 import com.xapps.auth.dto.ProfileDTO
+import com.xapps.auth.dto.UpdateProfileRequest
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.Authentication
@@ -68,6 +69,16 @@ class AuthController(
     ): JwtAuthResponse {
         return authService.changePassword(request, authentication)
     }
+
+    @PostMapping("/update-profile")
+    suspend fun updateProfile(
+        @RequestBody request: UpdateProfileRequest
+    ): EmptyResponse =
+        handle("update-profile") {
+
+            authService.updateProfile(request)
+            EmptyResponse()
+        }
 
     @GetMapping("/profile")
     suspend fun getProfile(): ProfileDTO  =

@@ -5,6 +5,7 @@ import com.xapps.auth.domain.model.user.UserProfile
 import com.xapps.auth.persistence.repository.user.MongoUserProfileRepository
 import com.xapps.auth.persistence.entity.user.UserProfileDocument
 import com.xapps.auth.persistence.saveUpserting
+import com.xapps.auth.persistence.mapper.FileDataMapper
 import org.springframework.stereotype.Repository
 
 interface UserProfileRepository {
@@ -21,7 +22,8 @@ interface UserProfileRepository {
 @Repository
 class UserProfileRepositoryImpl(
     private val mongoRepository: MongoUserProfileRepository,
-    private val fcmDeviceRepository: FcmDeviceRepository
+    private val fcmDeviceRepository: FcmDeviceRepository,
+    private val fileDataMapper: FileDataMapper
 ) : UserProfileRepository {
 
     override suspend fun create(userProfile: UserProfile): UserProfile {
@@ -62,6 +64,7 @@ class UserProfileRepositoryImpl(
     private fun UserProfile.toDocument(): UserProfileDocument {
         return UserProfileDocument(
             id1 = userId,
+            image = image?.let { fileDataMapper.toDocument(it) },
             userId = userId,
             avatarS3Key = avatarS3Key
         )
@@ -72,6 +75,7 @@ class UserProfileRepositoryImpl(
     ): UserProfile {
         return UserProfile(
             userId = userId,
+            image = image?.let { fileDataMapper.toDomain(it) },
             avatarS3Key = avatarS3Key,
             fcmDevices = fcmDevices
         )

@@ -9,6 +9,8 @@ interface MongoUserRepository : CoroutineCrudRepository<UserDocument, String> {
 
     suspend fun findByUserId(userId: String): UserDocument?
 
+    suspend fun existsByUsername(userName: String): Boolean
+
     suspend fun findByEmail(email: String): UserDocument?
 
     suspend fun existsByEmail(email: String): Boolean
