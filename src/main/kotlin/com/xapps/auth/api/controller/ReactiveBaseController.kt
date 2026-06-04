@@ -9,7 +9,7 @@ import org.springframework.security.core.context.ReactiveSecurityContextHolder
 
 abstract class ReactiveBaseController {
 
-    val blogger = LoggerFactory.getLogger(this::class.java)
+    val blog = LoggerFactory.getLogger(javaClass)
     /**
      * Retrieves the currently authenticated user principal from the reactive security context.
      *
@@ -32,12 +32,12 @@ abstract class ReactiveBaseController {
         crossinline block: suspend () -> T
     ): T =
         outcomeOf {
-            blogger.info("REQUEST COMING IN: $operation")
+            blog.info("REQUEST COMING IN: $operation")
             block()
         }.respond(
             onSuccess = { it },
             onFailure = {
-                blogger.error("$operation failed", it.exception)
+                blog.error("$operation failed", it.exception)
                 throw it.exception
             }
         )

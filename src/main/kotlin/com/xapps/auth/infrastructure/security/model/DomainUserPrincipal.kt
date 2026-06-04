@@ -22,7 +22,7 @@ data class DomainUserPrincipal(
     }
 
     override fun getPassword(): String? = null
-    override fun getUsername(): String = email
+    override fun getUsername(): String = user.username
     override fun isAccountNonExpired(): Boolean = true
     override fun isAccountNonLocked(): Boolean = true
     override fun isCredentialsNonExpired(): Boolean = true

@@ -10,11 +10,12 @@ import com.xapps.auth.dto.RefreshTokenRequest
 import com.xapps.auth.dto.SignupRequest
 import com.xapps.auth.application.service.AuthApplicationService
 import com.xapps.auth.dto.LogoutRequest
+import com.xapps.auth.dto.ProfileDTO
 import jakarta.validation.Valid
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.Authentication
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -24,18 +25,18 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class AuthController(
     private val authService: AuthApplicationService
-) {
+) : ReactiveBaseController() {
 
-    private val logger: Logger = LoggerFactory.getLogger(javaClass)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     @PostMapping("/signup")
     suspend fun signUp(
         @Valid @RequestBody request: SignupRequest,
         @ClientInfo metadata: ClientMetadata
     ): JwtAuthResponse {
-        logger.info("Sign up attempt for email=${request.email}")
+        log.info("Sign up attempt for email=${request.email}")
         val result = authService.registerUser(request, metadata)
-        logger.info("Sign-up success for email=${request.email}")
+        log.info("Sign-up success for email=${request.email}")
         return result
     }
 
@@ -44,9 +45,9 @@ class AuthController(
         @Valid @RequestBody request: LoginRequest,
         @ClientInfo metadata: ClientMetadata
     ): JwtAuthResponse {
-        logger.info("Login attempt for email=${request.email}")
+        log.info("Login attempt for email=${request.email}")
         val result = authService.loginUser(request, metadata)
-        logger.info("Login success for email=${request.email}")
+        log.info("Login success for email=${request.email}")
         return result
     }
 
@@ -67,6 +68,16 @@ class AuthController(
         return authService.changePassword(request, authentication)
     }
 
+    @GetMapping("/profile")
+    suspend fun getProfile(): ProfileDTO  =
+        handle("getProfile") {
+            val user = getAuthenticatedUserPrincipal().user
+            ProfileDTO(
+                username = user.username,
+                email = user.email
+            )
+        }
+
     @PostMapping("/refresh")
     @Transactional
     suspend fun refreshTokens(
@@ -74,7 +85,7 @@ class AuthController(
         @ClientInfo metadata: ClientMetadata
     ): JwtAuthResponse {
         val result = authService.refreshTokens(request, metadata)
-        logger.info("Token refresh SUCCESS")
+        log.info("Token refresh SUCCESS")
         return result
     }
 }
