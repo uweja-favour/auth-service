@@ -3,7 +3,7 @@ package com.xapps.auth.application.service
 import com.xapps.auth.core.service.BaseService
 import com.xapps.auth.core.web.ClientMetadata
 import com.xapps.auth.domain.exceptions.*
-import com.xapps.auth.domain.model.user.User
+import com.xapps.auth.domain.model.user.*
 import com.xapps.auth.domain.model.user.ensureNotBanned
 import com.xapps.auth.dto.JwtAuthResponse
 import com.xapps.auth.dto.ChangePasswordRequest
@@ -16,7 +16,6 @@ import com.xapps.auth.infrastructure.security.model.UserRole
 import com.xapps.auth.infrastructure.security.token.access.AccessTokenService
 import com.xapps.auth.infrastructure.security.token.refresh.RefreshTokenService
 import com.xapps.auth.persistence.repository.user.impl.UserRepository
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -57,7 +56,7 @@ class AuthApplicationService(
             role = user.role.name
         )
 
-        return JwtAuthResponse(accessToken, refreshToken)
+        return JwtAuthResponse(accessToken, refreshToken, user.getProfileDTO())
     }
 
 
@@ -83,7 +82,7 @@ class AuthApplicationService(
 
         log.info("LOGIN_5")
         val rawRefreshToken = refreshTokenService.issueToken(user.userId)
-        return JwtAuthResponse(accessToken, rawRefreshToken)
+        return JwtAuthResponse(accessToken, rawRefreshToken, user.getProfileDTO())
     }
 
 
@@ -136,7 +135,8 @@ class AuthApplicationService(
                 user.email,
                 user.role.name
             ),
-            refreshToken = refreshTokenService.issueToken(user.userId)
+            refreshToken = refreshTokenService.issueToken(user.userId),
+            profile = user.getProfileDTO()
         )
     }
 }

@@ -8,7 +8,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class JwtAuthResponse(
     val accessToken: RawAccessToken,
-    val refreshToken: RawRefreshToken
+    val refreshToken: RawRefreshToken,
+    val profile: ProfileDTO
 ) {
     // Convenience for logging - masks tokens
     override fun toString(): String =

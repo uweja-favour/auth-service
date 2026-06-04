@@ -9,6 +9,7 @@ import com.xapps.auth.dto.LoginRequest
 import com.xapps.auth.dto.RefreshTokenRequest
 import com.xapps.auth.dto.SignupRequest
 import com.xapps.auth.application.service.AuthApplicationService
+import com.xapps.auth.domain.model.user.getProfileDTO
 import com.xapps.auth.dto.LogoutRequest
 import com.xapps.auth.dto.ProfileDTO
 import jakarta.validation.Valid
@@ -72,10 +73,7 @@ class AuthController(
     suspend fun getProfile(): ProfileDTO  =
         handle("getProfile") {
             val user = getAuthenticatedUserPrincipal().user
-            ProfileDTO(
-                username = user.username,
-                email = user.email
-            )
+            user.getProfileDTO()
         }
 
     @PostMapping("/refresh")

@@ -1,12 +1,11 @@
 package com.xapps.auth.domain.model.user
 
 import com.xapps.auth.domain.exceptions.UserBannedException
+import com.xapps.auth.dto.ProfileDTO
 import com.xapps.auth.infrastructure.security.model.UserRole
 import com.xapps.platform.core.string.generateUniqueId
 import com.xapps.platform.core.time.nowInKotlinInstant
-import com.xapps.platform.core.time.nowInKotlinLocalDateTime
 import com.xapps.time.types.KotlinInstant
-import com.xapps.time.types.KotlinLocalDateTime
 
 data class User(
     val userId: String,
@@ -52,3 +51,10 @@ fun User.ensureNotBanned(): User {
 }
 
 fun User.withIdentifyingInfo(): String = "not_yet_implemented"
+
+fun User.getProfileDTO(): ProfileDTO {
+    return ProfileDTO(
+        username = username,
+        email = email
+    )
+}

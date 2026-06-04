@@ -4,9 +4,11 @@ import com.xapps.auth.core.web.ClientMetadata
 import com.xapps.auth.core.service.exceptions.InvalidAuthentication
 import com.xapps.auth.domain.model.user.ensureNotBanned
 import com.xapps.auth.infrastructure.security.model.DomainUserPrincipal
+import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
 
@@ -14,6 +16,14 @@ import org.springframework.web.server.ServerWebExchange
 open class BaseService {
 
     val log: Logger = LoggerFactory.getLogger("BaseService")
+
+    suspend fun getAuthenticatedUserPrincipal(): DomainUserPrincipal {
+        return ReactiveSecurityContextHolder.getContext()
+            .awaitSingleOrNull()
+            ?.authentication
+            ?.principal as? DomainUserPrincipal
+            ?: throw IllegalStateException("User is not authenticated")
+    }
 
     protected fun extractClientIp(exchange: ServerWebExchange): String {
         val headers = exchange.request.headers
