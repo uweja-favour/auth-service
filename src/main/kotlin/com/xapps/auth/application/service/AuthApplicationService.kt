@@ -123,26 +123,36 @@ class AuthApplicationService(
         request: UpdateProfileRequest
     ): ProfileDTO {
 
-        val user = getAuthenticatedUserPrincipal().user
-        when {
-            user.username != request.username &&
-                    userRepository.existsByUsername(request.username)
+        log.info("UPDATE_PROFILE_1")
 
-            -> {
-                throw UsernameAlreadyExistException()
-            }
+        val user = getAuthenticatedUserPrincipal().user
+
+        log.info("UPDATE_PROFILE_2")
+
+        if (
+            user.username != request.username &&
+            userRepository.existsByUsername(request.username)
+        ) {
+            log.info("UPDATE_PROFILE_3")
+            throw UsernameAlreadyExistException()
         }
 
-        val updatedUser = user.updateProfile(request.username, request.profilePhoto)
+        log.info("UPDATE_PROFILE_4")
+
+        val updatedUser =
+            user.updateProfile(request.username, request.profilePhoto)
+
+        log.info("UPDATE_PROFILE_5")
 
         userRepository.updateUser(updatedUser)
 
-        val profileDTO = ProfileDTO(
+        log.info("UPDATE_PROFILE_6")
+
+        return ProfileDTO(
             username = request.username,
             email = user.email,
             image = request.profilePhoto
         )
-        return profileDTO
     }
 
     suspend fun refreshTokens(
