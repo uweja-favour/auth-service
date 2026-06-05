@@ -21,15 +21,8 @@ import org.springframework.data.mongodb.core.mapping.Document
 //    const val AVATAR_S3_KEY = "avatar_s3_key"
 //}
 
-@Document("user_profiles")
 data class UserProfileDocument(
-    @Id
-    val id1: String,
+    val userId: String,
 
     val image: FileDataDocument?,
-    val userId: String,
-    val avatarS3Key: String?
-) : BasePersistableEntity() {
-
-    override fun getTheId(): String = id1
-}
+)

@@ -7,8 +7,6 @@ import com.xapps.time.types.KotlinLocalDateTime
 data class UserProfile(
     val image: FileData? = null,
     val userId: String,
-    val avatarS3Key: String? = null,
-    val fcmDevices: List<FcmDevice> = emptyList()
 ) {
     companion object {
         fun createNew(userId: String): UserProfile {

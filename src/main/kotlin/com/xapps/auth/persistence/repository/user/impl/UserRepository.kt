@@ -5,6 +5,8 @@ import com.xapps.auth.domain.model.user.User
 import com.xapps.auth.domain.model.user.UserProfile
 import com.xapps.auth.infrastructure.security.model.UserRole
 import com.xapps.auth.persistence.entity.user.UserDocument
+import com.xapps.auth.persistence.entity.user.UserProfileDocument
+import com.xapps.auth.persistence.mapper.FileDataMapper
 import com.xapps.auth.persistence.repository.exceptions.UserDoesNotExistException
 import com.xapps.auth.persistence.repository.user.MongoUserRepository
 import com.xapps.auth.persistence.saveUpserting
@@ -28,8 +30,8 @@ interface UserRepository {
 @Repository
 class UserRepositoryImpl(
     private val mongoRepository: MongoUserRepository,
-    private val userProfileRepository: UserProfileRepository,
-    private val userSubscriptionRepository: UserSubscriptionRepository
+    private val userSubscriptionRepository: UserSubscriptionRepository,
+    private val fileDataMapper: FileDataMapper
 ) : UserRepository {
 
     override suspend fun createNewUser(user: User): User {
@@ -42,28 +44,15 @@ class UserRepositoryImpl(
 
         mongoRepository.saveUpserting(user.toDocument())
 
-        userProfileRepository.create(user.profile)
-
         return user
     }
 
     override suspend fun updateUser(user: User): User {
 
-        val existingUser = mongoRepository.findByUserId(user.userId)
+        mongoRepository.findByUserId(user.userId)
             ?: throw UserDoesNotExistException()
 
-        val updatedDocument = existingUser.copy(
-            email = user.email,
-            username = user.username,
-            passwordHash = user.passwordHash,
-            roleCode = user.role.code,
-            isBanned = user.isBanned,
-            createdAt = user.createdAt
-        )
-
-        mongoRepository.saveUpserting(updatedDocument)
-
-        userProfileRepository.update(user.profile)
+        mongoRepository.saveUpserting(user.toDocument())
 
         return user
     }
@@ -94,23 +83,6 @@ class UserRepositoryImpl(
 
     private suspend fun UserDocument.toDomain(): User {
 
-        val userProfile = userProfileRepository.findByUserId(userId)
-            ?: return User(
-                userId = userId,
-                email = email,
-                username = username,
-                passwordHash = passwordHash,
-                role = UserRole.fromCode(roleCode),
-                isBanned = isBanned,
-                createdAt = createdAt,
-                profile = UserProfile(
-                    userId = userId,
-                    avatarS3Key = "",
-                    fcmDevices = emptyList()
-                ),
-                subscription = userSubscriptionRepository.findByUserId(userId)
-            )
-
         val userSubscription = userSubscriptionRepository.findByUserId(userId)
 
         return User(
@@ -121,7 +93,7 @@ class UserRepositoryImpl(
             role = UserRole.fromCode(roleCode),
             isBanned = isBanned,
             createdAt = createdAt,
-            profile = userProfile,
+            profile = profile.toDomain(),
             subscription = userSubscription
         )
     }
@@ -134,7 +106,22 @@ class UserRepositoryImpl(
             passwordHash = passwordHash,
             roleCode = role.code,
             isBanned = isBanned,
-            createdAt = createdAt
+            createdAt = createdAt,
+            profile = profile.toDocument()
+        )
+    }
+
+    private fun UserProfileDocument.toDomain(): UserProfile {
+        return UserProfile(
+            image = image?.let { fileDataMapper.toDomain(it) },
+            userId = userId
+        )
+    }
+
+    private fun UserProfile.toDocument(): UserProfileDocument {
+        return UserProfileDocument(
+            image = image?.let { fileDataMapper.toDocument(it) },
+            userId = userId
         )
     }
 }

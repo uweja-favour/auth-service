@@ -42,7 +42,8 @@ data class UserDocument (
     val passwordHash: String,
     val roleCode: UserRoleCode,
     val isBanned: Boolean,
-    val createdAt: KotlinInstant
+    val createdAt: KotlinInstant,
+    val profile: UserProfileDocument
 ) : BasePersistableEntity() {
 
     override fun getTheId() = userId
