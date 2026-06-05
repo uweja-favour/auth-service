@@ -73,11 +73,10 @@ class AuthController(
     @PostMapping("/update-profile")
     suspend fun updateProfile(
         @RequestBody request: UpdateProfileRequest
-    ): EmptyResponse =
+    ): ProfileDTO =
         handle("update-profile") {
 
             authService.updateProfile(request)
-            EmptyResponse()
         }
 
     @GetMapping("/profile")

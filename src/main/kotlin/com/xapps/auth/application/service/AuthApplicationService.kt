@@ -9,6 +9,7 @@ import com.xapps.auth.dto.JwtAuthResponse
 import com.xapps.auth.dto.ChangePasswordRequest
 import com.xapps.auth.dto.LoginRequest
 import com.xapps.auth.dto.LogoutRequest
+import com.xapps.auth.dto.ProfileDTO
 import com.xapps.auth.dto.RefreshTokenRequest
 import com.xapps.auth.persistence.repository.exceptions.UserDoesNotExistException
 import com.xapps.auth.dto.SignupRequest
@@ -120,7 +121,7 @@ class AuthApplicationService(
 
     suspend fun updateProfile(
         request: UpdateProfileRequest
-    ) {
+    ): ProfileDTO {
 
         val user = getAuthenticatedUserPrincipal().user
         when {
@@ -135,6 +136,13 @@ class AuthApplicationService(
         val updatedUser = user.updateProfile(request.username, request.profilePhoto)
 
         userRepository.updateUser(updatedUser)
+
+        val profileDTO = ProfileDTO(
+            username = request.username,
+            email = user.email,
+            image = request.profilePhoto
+        )
+        return profileDTO
     }
 
     suspend fun refreshTokens(
