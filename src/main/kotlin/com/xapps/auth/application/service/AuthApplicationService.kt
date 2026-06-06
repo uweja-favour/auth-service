@@ -45,6 +45,10 @@ class AuthApplicationService(
             throw UsernameAlreadyExistException()
         }
 
+        if (request.password.length < 8) {
+            throw InvalidPasswordLengthException()
+        }
+
         val user = User.createNew(
             email = request.email,
             passwordHash = passwordEncoder.encode(request.password),
@@ -99,25 +103,38 @@ class AuthApplicationService(
         jwtService.revokeAllTokensByUserId(userId)
     }
 
-
     suspend fun changePassword(
-        request: ChangePasswordRequest,
-        authentication: Authentication
-    ): JwtAuthResponse = withValidUser(authentication) { userPrincipal ->
+        request: ChangePasswordRequest
+    ): JwtAuthResponse {
 
-        val user = userPrincipal.user
+        val user = authenticatedUser()
 
-        if (!passwordEncoder.matches(request.oldPassword, user.passwordHash)) {
-            throw IncorrectPasswordException()
-        }
+        validateCurrentPassword(user, request.currentPassword)
+        validatePasswordLength(request.newPassword)
 
-        userRepository.updateUser(
-            user.copy(passwordHash = passwordEncoder.encode(request.newPassword))
+        val updatedUser = user.copy(
+            passwordHash = passwordEncoder.encode(request.newPassword)
         )
 
-        issueNewTokens(user)
+        userRepository.updateUser(updatedUser)
+
+        return issueNewTokens(updatedUser)
     }
 
+    private fun validatePasswordLength(password: String) {
+        if (password.length < 8) {
+            throw InvalidPasswordLengthException()
+        }
+    }
+
+    private fun validateCurrentPassword(
+        user: User,
+        rawPassword: String
+    ) {
+        if (!passwordEncoder.matches(rawPassword, user.passwordHash)) {
+            throw IncorrectPasswordException()
+        }
+    }
 
     suspend fun updateProfile(
         request: UpdateProfileRequest

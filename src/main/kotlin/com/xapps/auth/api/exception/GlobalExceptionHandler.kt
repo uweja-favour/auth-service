@@ -3,6 +3,7 @@ package com.xapps.auth.api.exception
 import com.xapps.auth.domain.exceptions.EmailAlreadyExistException
 import com.xapps.auth.domain.exceptions.EmailNotFoundException
 import com.xapps.auth.domain.exceptions.IncorrectPasswordException
+import com.xapps.auth.domain.exceptions.InvalidPasswordLengthException
 import com.xapps.auth.domain.exceptions.RefreshTokenExpiredException
 import com.xapps.auth.domain.exceptions.RefreshTokenInvalidException
 import com.xapps.auth.domain.exceptions.RefreshTokenRevokedException
@@ -66,6 +67,18 @@ class GlobalExceptionHandler {
             ApiErrorResponse(
                 errorType = ApiErrorResponseType.INVALID_CREDENTIALS,
                 message = "Incorrect email or password"
+            )
+        )
+    }
+
+    @ExceptionHandler(IncorrectPasswordException::class)
+    fun handleInvalidPasswordLength(ex: InvalidPasswordLengthException): ResponseEntity<ApiErrorResponse> {
+        log.info("${javaClass.simpleName} ran handleInvalidPasswordLength")
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+            ApiErrorResponse(
+                errorType = ApiErrorResponseType.INVALID_PASSWORD_LENGTH,
+                message = "Incorrect password length"
             )
         )
     }

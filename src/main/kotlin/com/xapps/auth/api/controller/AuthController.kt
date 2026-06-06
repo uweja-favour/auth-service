@@ -64,10 +64,9 @@ class AuthController(
 
     @PostMapping("/change-password")
     suspend fun changePassword(
-        authentication: Authentication,
-        @Valid @RequestBody request: ChangePasswordRequest
-    ): JwtAuthResponse {
-        return authService.changePassword(request, authentication)
+        @RequestBody request: ChangePasswordRequest
+    ): JwtAuthResponse = handle("change-password") {
+        authService.changePassword(request)
     }
 
     @PostMapping("/update-profile")

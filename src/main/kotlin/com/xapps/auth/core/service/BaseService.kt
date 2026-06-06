@@ -2,6 +2,7 @@ package com.xapps.auth.core.service
 
 import com.xapps.auth.core.web.ClientMetadata
 import com.xapps.auth.core.service.exceptions.InvalidAuthentication
+import com.xapps.auth.domain.model.user.User
 import com.xapps.auth.domain.model.user.ensureNotBanned
 import com.xapps.auth.infrastructure.security.model.DomainUserPrincipal
 import kotlinx.coroutines.reactor.awaitSingleOrNull
@@ -24,6 +25,11 @@ open class BaseService {
             ?.principal as? DomainUserPrincipal
             ?: throw IllegalStateException("User is not authenticated")
     }
+
+    suspend fun authenticatedUser(): User =
+        getAuthenticatedUserPrincipal()
+            .user
+            .also(User::ensureNotBanned)
 
     protected fun extractClientIp(exchange: ServerWebExchange): String {
         val headers = exchange.request.headers
