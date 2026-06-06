@@ -71,7 +71,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    @ExceptionHandler(IncorrectPasswordException::class)
+    @ExceptionHandler(InvalidPasswordLengthException::class)
     fun handleInvalidPasswordLength(ex: InvalidPasswordLengthException): ResponseEntity<ApiErrorResponse> {
         log.info("${javaClass.simpleName} ran handleInvalidPasswordLength")
 
