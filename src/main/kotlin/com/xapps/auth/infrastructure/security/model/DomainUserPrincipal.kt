@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails
 data class DomainUserPrincipal(
     val user: User,
     val email: String,
-    val username: String,
+    val theUsername: String,
     val userRole: UserRole,
     val otherRoles: List<String> = emptyList()
 ) : UserDetails {

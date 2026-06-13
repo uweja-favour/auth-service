@@ -34,6 +34,7 @@ class AccessTokenAuthenticationService(
         return DomainUserPrincipal(
             user = user,
             email = user.email,
+            theUsername = user.username,
             userRole = user.role
         )
     }
