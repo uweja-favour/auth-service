@@ -4,6 +4,7 @@ object JwtClaims {
 
     const val SUBJECT = "sub"
     const val USER_ID = "userId"
+    const val USERNAME = "userName"
     const val EMAIL = "email"
     const val ROLE = "role"
     const val ROLES = "roles"

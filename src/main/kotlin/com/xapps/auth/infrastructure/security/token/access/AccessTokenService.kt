@@ -1,5 +1,6 @@
 package com.xapps.auth.infrastructure.security.token.access
 
+import com.xapps.auth.domain.model.user.User
 import com.xapps.auth.dto.RawAccessToken
 import com.xapps.auth.infrastructure.security.model.AccessToken
 import com.xapps.auth.infrastructure.security.token.JtiFactory
@@ -19,34 +20,28 @@ class AccessTokenService(
     private val clockProvider: ClockProvider
 ) {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
-
     @Value("\${jwt.access-token.expiration-ms:900000}") // 15 minutes default
     private val accessTokenDurationMillis = 15.minutes.inWholeMilliseconds
 
     suspend fun issueToken(
-        userId: String,
-        email: String,
-        role: String,
+        user: User,
         expiryMillis: Long = accessTokenDurationMillis
     ): RawAccessToken {
 
-        repository.revokeAllActiveByUserId(userId)
+        repository.revokeAllActiveByUserId(user.userId)
 
         val jti = jtiFactory.createNewJti()
 
         val rawAccessToken = factory.create(
-            userId = userId,
+            user = user,
             jti = jti,
-            email = email,
-            role = role,
             expiryMillis = expiryMillis
         )
 
         repository.insert(
             AccessToken.new(
                 jti = jti,
-                userId = userId,
+                userId = user.userId,
                 expiryAt = tokenExpiry(expiryMillis),
                 now = clockProvider.now()
             )

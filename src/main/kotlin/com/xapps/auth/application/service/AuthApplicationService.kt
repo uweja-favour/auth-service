@@ -60,11 +60,7 @@ class AuthApplicationService(
 
         val refreshToken = refreshTokenService.issueToken(user.userId)
 
-        val accessToken = jwtService.issueToken(
-            userId = user.userId,
-            email = user.email,
-            role = user.role.name
-        )
+        val accessToken = jwtService.issueToken(user = user)
 
         return JwtAuthResponse(accessToken, refreshToken, user.getProfileDTO())
     }
@@ -84,11 +80,7 @@ class AuthApplicationService(
         }
 
         log.info("LOGIN_4")
-        val accessToken = jwtService.issueToken(
-            userId = user.userId,
-            email = user.email,
-            role = user.role.name
-        )
+        val accessToken = jwtService.issueToken(user = user)
 
         log.info("LOGIN_5")
         val rawRefreshToken = refreshTokenService.issueToken(user.userId)
@@ -189,11 +181,7 @@ class AuthApplicationService(
 
     suspend fun issueNewTokens(user: User): JwtAuthResponse {
         return JwtAuthResponse(
-            accessToken = jwtService.issueToken(
-                userId = user.userId,
-                user.email,
-                user.role.name
-            ),
+            accessToken = jwtService.issueToken(user = user),
             refreshToken = refreshTokenService.issueToken(user.userId),
             profile = user.getProfileDTO()
         )

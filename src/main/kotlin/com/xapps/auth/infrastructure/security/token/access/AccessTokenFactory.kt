@@ -1,5 +1,6 @@
 package com.xapps.auth.infrastructure.security.token.access
 
+import com.xapps.auth.domain.model.user.User
 import com.xapps.auth.dto.RawAccessToken
 import com.xapps.auth.infrastructure.security.jwt.JwtClaims
 import com.xapps.auth.infrastructure.security.jwt.JwtEncoders
@@ -17,9 +18,7 @@ class AccessTokenFactory(
 ) {
 
     fun create(
-        userId: String,
-        email: String,
-        role: String,
+        user: User,
         expiryMillis: Long,
         jti: String
     ): RawAccessToken {
@@ -29,11 +28,13 @@ class AccessTokenFactory(
 
         val claims = JwtClaimsSet.builder()
             .id(jti)
-            .subject(userId)
+            .subject(user.userId)
             .issuedAt(now)
             .expiresAt(expiry)
-            .claim(JwtClaims.EMAIL, email)
-            .claim(JwtClaims.ROLE, role)
+            .claim(JwtClaims.USER_ID, user.userId)
+            .claim(JwtClaims.EMAIL, user.email)
+            .claim(JwtClaims.USERNAME, user.username)
+            .claim(JwtClaims.ROLE,  user.role.name)
             .claim(JwtClaims.TOKEN_TYPE, JwtClaims.ACCESS)
             .build()
 

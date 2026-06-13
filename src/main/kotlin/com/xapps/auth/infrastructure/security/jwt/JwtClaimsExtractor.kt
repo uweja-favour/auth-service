@@ -12,6 +12,9 @@ class JwtClaimsExtractor {
     fun extractEmail(jwt: Jwt): String =
         jwt.claims[JwtClaims.EMAIL] as? String ?: error("Missing email")
 
+    fun extractUsername(jwt: Jwt): String =
+        jwt.claims[JwtClaims.USERNAME] as? String ?: error("Missing username")
+
     fun extractRole(jwt: Jwt): String =
         jwt.claims[JwtClaims.ROLE] as? String ?: error("Missing role")
 
